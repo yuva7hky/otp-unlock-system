@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Account Unlock Portal</title>
+  <style>
+    :root{--bg:#f4efe7;--bg2:#dde7f4;--surface:rgba(255,255,255,.84);--text:#1e2432;--muted:#667085;--line:rgba(54,74,99,.12);--primary:#0f6d5f;--primary-2:#15907a;--accent:#e7903d;--success:#157f58;--success-bg:rgba(21,127,88,.12);--danger:#b9384f;--danger-bg:rgba(185,56,79,.12);--warning:#b26a00;--warning-bg:rgba(178,106,0,.14);--shadow:0 24px 60px rgba(27,38,59,.16);--radius:24px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;font-family:Aptos,"Trebuchet MS","Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(231,144,61,.24),transparent 34%),radial-gradient(circle at top right,rgba(15,109,95,.18),transparent 30%),linear-gradient(145deg,var(--bg),#f7fafc 45%,var(--bg2));}
+    body:before,body:after{content:"";position:fixed;border-radius:999px;pointer-events:none;z-index:0;filter:blur(10px)}body:before{width:260px;height:260px;right:-80px;top:140px;background:rgba(231,144,61,.12)}body:after{width:340px;height:340px;left:-120px;bottom:-120px;background:rgba(15,109,95,.12)}
+    .shell{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:28px 20px 72px}
+    .masthead{position:relative;display:flex;align-items:center;justify-content:flex-start;min-height:84px;margin-bottom:24px;padding:14px 18px;border:1px solid rgba(15,109,95,.12);border-radius:24px;background:rgba(255,255,255,.72);box-shadow:0 12px 28px rgba(33,45,66,.08);backdrop-filter:blur(10px)}.brand-mark{display:inline-flex;align-items:center;flex:0 0 auto;margin-left:12px}.brand-logo{height:40px;width:auto;display:block;object-fit:contain}.header-title{position:absolute;left:50%;transform:translateX(-50%);margin:0;max-width:calc(100% - 220px);text-align:center;font-size:clamp(1.2rem,3vw,2.1rem);line-height:1.1;letter-spacing:-.03em;font-weight:900;color:var(--text)}.header-spacer{flex:0 0 120px}
+    .hero{text-align:center;margin-bottom:24px}.badge{display:inline-flex;align-items:center;padding:10px 16px;border:1px solid rgba(15,109,95,.18);border-radius:999px;background:rgba(255,255,255,.65);color:#0a5448;font-size:.92rem;font-weight:700;margin-bottom:14px;backdrop-filter:blur(10px)}h1{margin:0;font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;letter-spacing:-.03em}.hero p{max-width:720px;margin:14px auto 0;color:var(--muted);font-size:1.02rem;line-height:1.65}
+    .tabs{display:flex;justify-content:center;gap:12px;margin:28px auto 30px;flex-wrap:wrap}.tab-btn{border:1px solid rgba(15,109,95,.14);background:rgba(255,255,255,.72);color:var(--text);padding:14px 18px;min-width:180px;border-radius:999px;font-size:.98rem;font-weight:700;cursor:pointer;transition:.2s;box-shadow:0 12px 28px rgba(33,45,66,.08)}.tab-btn:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(33,45,66,.12)}.tab-btn.active{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent}
+    .panel{display:none;animation:fadeUp .35s ease}.panel.active{display:block}.card{background:var(--surface);border:1px solid rgba(255,255,255,.8);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;backdrop-filter:blur(18px)}.card+.card{margin-top:22px}
+    .mode-dock{display:flex;justify-content:flex-end;gap:12px;margin-bottom:18px}.flow-shell{padding:0;overflow:hidden}.flow-view{display:grid;gap:18px;opacity:0;transform:translateY(18px);max-height:0;overflow:hidden;pointer-events:none;padding:0 28px;transition:opacity .35s ease,transform .35s ease,max-height .45s ease,padding .35s ease}.flow-view.active{opacity:1;transform:translateY(0);max-height:2200px;pointer-events:auto;padding:28px}.flow-main{display:grid;gap:16px}.success-screen{display:none;align-items:center;justify-content:center;text-align:center;min-height:min(68vh,560px);padding:32px;background:linear-gradient(160deg,rgba(21,127,88,.12),rgba(255,255,255,.88))}.flow-view.complete{min-height:min(68vh,560px)}.flow-view.complete .flow-main,.flow-view.complete .card-head{display:none}.flow-view.complete .success-screen{display:flex;animation:fadeUp .35s ease}.success-copy{display:grid;gap:18px;justify-items:center;max-width:680px}.success-copy h2{margin:0;font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;font-weight:900;letter-spacing:.08em;color:var(--success);text-transform:uppercase}.success-copy p{margin:0;font-size:clamp(1.15rem,2vw,1.45rem);font-weight:800;color:#14563e}.success-copy span{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:999px;background:rgba(21,127,88,.12);color:var(--success);font-size:.86rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .card-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.card-title{margin:0;font-size:1.35rem;letter-spacing:-.02em}.copy{margin:8px 0 0;color:var(--muted);line-height:1.6}.tag{padding:8px 12px;border-radius:999px;background:rgba(15,109,95,.1);color:#0a5448;font-size:.84rem;font-weight:800;white-space:nowrap}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{display:flex;flex-direction:column;gap:8px}.field.full{grid-column:1/-1}label{font-size:.92rem;font-weight:700;color:#354052}
+    input{width:100%;padding:14px 16px;border-radius:16px;border:1px solid rgba(53,64,82,.12);background:rgba(255,255,255,.94);color:var(--text);font-size:1rem;transition:.2s;outline:none}input:focus{border-color:rgba(15,109,95,.5);box-shadow:0 0 0 4px rgba(15,109,95,.12);transform:translateY(-1px)}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;align-items:center}button{appearance:none;border:none;border-radius:16px;padding:14px 18px;font-size:.98rem;font-weight:800;cursor:pointer;transition:.2s}button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 18px 30px rgba(24,40,61,.18)}button:disabled{cursor:wait;opacity:.72;box-shadow:none;transform:none}
+    .primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff}.secondary{background:rgba(15,109,95,.1);color:#0a5448}.ghost{background:rgba(30,36,50,.06);color:var(--text)}.load{position:relative;padding-right:48px}.load:after{content:"";position:absolute;right:18px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;animation:spin .7s linear infinite}.secondary.load:after,.ghost.load:after{border:2px solid rgba(15,109,95,.3);border-top-color:#0a5448}
+    .alert{display:none;border-radius:18px;padding:14px 16px;margin-top:16px;font-weight:700;line-height:1.5}.alert.show{display:block;animation:fadeUp .25s ease}.success{background:var(--success-bg);color:var(--success);border:1px solid rgba(21,127,88,.16)}.error{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(185,56,79,.16)}.warning{background:var(--warning-bg);color:var(--warning);border:1px solid rgba(178,106,0,.16)}
+    .helper{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:16px;color:var(--muted);font-size:.92rem;flex-wrap:wrap}.verify{display:none;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}.verify.visible{display:block;animation:fadeUp .3s ease}
+    .steps{display:grid;gap:16px;margin-top:8px}.step{border-radius:20px;padding:18px;background:rgba(255,255,255,.72);border:1px solid rgba(53,64,82,.08);display:none}.step.visible{display:block;animation:fadeUp .3s ease}.step-label{display:inline-flex;align-items:center;gap:10px;font-size:.88rem;font-weight:800;color:#0a5448;margin-bottom:14px;text-transform:uppercase;letter-spacing:.05em}.num{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(15,109,95,.12)}
+    .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:22px}.metric{border-radius:22px;padding:20px;color:#fff;min-height:138px;box-shadow:0 20px 32px rgba(32,42,57,.16)}.m1{background:linear-gradient(135deg,#15907a,#0f6d5f)}.m2{background:linear-gradient(135deg,#d66750,#b9384f)}.m3{background:linear-gradient(135deg,#d39b30,#b26a00)}.ml{font-size:.92rem;opacity:.9;display:block;margin-bottom:20px}.mv{font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1;letter-spacing:-.04em}.mn{margin-top:12px;font-size:.95rem;opacity:.88}
+    .dash{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-top:8px}.sub{background:rgba(255,255,255,.76);border:1px solid rgba(53,64,82,.08);border-radius:22px;padding:20px}.sub h3{margin:0 0 12px;font-size:1.05rem}.note{font-size:.92rem;color:var(--muted);line-height:1.55;margin-top:12px}
+    .top{margin:0;padding:0;list-style:none;display:grid;gap:10px}.top li{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(15,109,95,.06);font-weight:700}
+    .table-card{margin-top:22px}.table-wrap{overflow-x:auto;border-radius:18px;border:1px solid rgba(53,64,82,.08);background:rgba(255,255,255,.78)}table{width:100%;border-collapse:collapse;min-width:760px}thead{background:rgba(15,109,95,.08)}th,td{padding:14px 16px;text-align:left;border-bottom:1px solid rgba(53,64,82,.08);font-size:.95rem;vertical-align:top}th{font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:#506072}tbody tr:hover{background:rgba(15,109,95,.04)}.pill{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;border-radius:999px;background:rgba(53,64,82,.08);font-size:.82rem;font-weight:800;white-space:nowrap}
+    .muted{color:var(--muted)}.hidden{display:none!important}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes spin{to{transform:rotate(360deg)}}
+    @media (max-width:920px){.metrics,.dash,.grid{grid-template-columns:1fr}.card-head{flex-direction:column}}@media (max-width:640px){.shell{padding:20px 14px 48px}.masthead{flex-wrap:wrap;justify-content:center;padding:16px 14px}.brand-mark{margin-left:0;margin-right:auto}.header-title{position:static;transform:none;order:2;max-width:100%;width:100%;margin-top:12px;font-size:clamp(1.25rem,6vw,1.8rem)}.header-spacer{display:none}.card{padding:22px 18px}.flow-view.active{padding:22px 18px}.tab-btn{width:100%}.actions button{width:100%}.mode-dock{justify-content:stretch}.mode-dock button{width:100%}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div class="brand-mark">
+        <img class="brand-logo" src="logo.png" alt="Company logo">
+      </div>
+      <h1 class="header-title">Secure self-service account recovery</h1>
+      <div class="header-spacer" aria-hidden="true"></div>
+    </header>
+
+    <section class="hero">
+      <div class="badge">FastAPI OTP Unlock Portal</div>
+      <p>Request an OTP to unlock a locked account, reset a password through a guided flow, and review admin activity from a single responsive page wired to the FastAPI backend on <strong>localhost:8000</strong>.</p>
+    </section>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="user-panel" type="button">User Access</button>
+      <button class="tab-btn" data-tab="admin-panel" type="button">Admin Panel</button>
+    </div>
+
+    <section class="panel active" id="user-panel">
+      <div class="mode-dock">
+        <button class="secondary" id="switch-to-reset" type="button">Reset Password</button>
+        <button class="ghost hidden" id="switch-to-unlock" type="button">User Access</button>
+      </div>
+      <article class="card flow-shell">
+        <section class="flow-view active" id="unlock-view">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Account Unlock</h2>
+              <p class="copy">Request an OTP for a locked account, then verify it to unlock access.</p>
+            </div>
+            <span class="tag">OTP Unlock</span>
+          </div>
+          <div class="flow-main">
+            <form id="unlock-request-form">
+              <div class="grid">
+              <div class="field full">
+                  <label for="unlock-username">Username</label>
+                  <input id="unlock-username" type="text" autocomplete="username" placeholder="Enter your username" required>
+                </div>
+              </div>
+              <div class="actions">
+                <button class="primary" id="unlock-request-button" type="submit">Request OTP</button>
+              </div>
+            </form>
+            <div class="alert" id="unlock-alert"></div>
+            <div class="helper">
+              <span id="unlock-note">Waiting for an OTP request.</span>
+              <span class="muted">Demo locked users: <strong>john</strong> and <strong>rajasekar</strong>.</span>
+            </div>
+            <div class="verify" id="unlock-verify">
+              <form id="unlock-verify-form">
+                <div class="grid">
+                  <div class="field full">
+                    <label for="unlock-otp">OTP</label>
+                    <input id="unlock-otp" inputmode="numeric" maxlength="6" placeholder="Enter the 6-digit OTP" required>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button class="primary" id="unlock-verify-button" type="submit">Verify &amp; Unlock</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="success-screen" id="unlock-success">
+            <div class="success-copy">
+              <span>Success</span>
+              <h2>ACCOUNT UNLOCKED SUCCESSFULLY</h2>
+              <p>You can sign in now.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="flow-view" id="reset-view">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Reset Password</h2>
+              <p class="copy">Use the guided three-step flow to request an OTP, verify it, and update the password.</p>
+            </div>
+            <span class="tag">Password Reset</span>
+          </div>
+          <div class="flow-main">
+            <div class="steps">
+              <section class="step visible" id="reset-step-1">
+                <div class="step-label"><span class="num">1</span>Request OTP</div>
+                <form id="reset-request-form">
+                  <div class="grid">
+                    <div class="field full">
+                      <label for="reset-username">Username</label>
+                      <input id="reset-username" type="text" autocomplete="username" placeholder="Enter your username" required>
+                    </div>
+                  </div>
+                  <div class="actions">
+                    <button class="primary" id="reset-request-button" type="submit">Request OTP</button>
+                  </div>
+                </form>
+              </section>
+              <section class="step" id="reset-step-2">
+                <div class="step-label"><span class="num">2</span>Verify OTP</div>
+                <form id="reset-verify-form">
+                  <div class="grid">
+                    <div class="field full">
+                      <label for="reset-otp">OTP</label>
+                      <input id="reset-otp" inputmode="numeric" maxlength="6" placeholder="Enter the OTP sent to you" required>
+                    </div>
+                  </div>
+                  <div class="actions">
+                    <button class="primary" id="reset-verify-button" type="submit">Verify OTP</button>
+                  </div>
+                </form>
+              </section>
+              <section class="step" id="reset-step-3">
+                <div class="step-label"><span class="num">3</span>Update Password</div>
+                <form id="reset-update-form">
+                  <div class="grid">
+                    <div class="field">
+                      <label for="new-password">New Password</label>
+                      <input id="new-password" type="password" autocomplete="new-password" placeholder="Create a new password" required>
+                    </div>
+                    <div class="field">
+                      <label for="confirm-password">Confirm Password</label>
+                      <input id="confirm-password" type="password" autocomplete="new-password" placeholder="Confirm the password" required>
+                    </div>
+                  </div>
+                  <div class="actions">
+                    <button class="primary" id="reset-update-button" type="submit">Update Password</button>
+                  </div>
+                </form>
+              </section>
+            </div>
+            <div class="alert" id="reset-alert"></div>
+            <p class="note" id="reset-note">Step 1 is ready. Request an OTP to continue.</p>
+          </div>
+          <div class="success-screen" id="reset-success">
+            <div class="success-copy">
+              <span>Success</span>
+              <h2>PASSWORD UPDATED SUCCESSFULLY</h2>
+            </div>
+          </div>
+        </section>
+      </article>
+    </section>
+
+    <section class="panel" id="admin-panel">
+      <article class="card" id="admin-login-card">
+        <div class="card-head">
+          <div>
+            <h2 class="card-title">Admin Login</h2>
+            <p class="copy">Use the demo administrator credentials to access the dashboard and audit logs.</p>
+          </div>
+          <span class="tag">Internal Access</span>
+        </div>
+        <form id="admin-login-form">
+          <div class="grid">
+            <div class="field">
+              <label for="admin-username">Username</label>
+              <input id="admin-username" type="text" autocomplete="username" placeholder="admin" required>
+            </div>
+            <div class="field">
+              <label for="admin-password">Password</label>
+              <input id="admin-password" type="password" autocomplete="current-password" placeholder="admin123" required>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="primary" id="admin-login-button" type="submit">Login</button>
+          </div>
+        </form>
+        <div class="alert" id="admin-login-alert"></div>
+        <p class="note">Demo credentials: <strong>admin</strong> / <strong>admin123</strong></p>
+      </article>
+
+      <div class="hidden" id="admin-shell">
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Admin Dashboard</h2>
+              <p class="copy">Summary cards pull from <code>/api/admin/stats</code> and the table reads from <code>/api/admin/logs</code>.</p>
+            </div>
+            <div class="actions">
+              <button class="secondary" id="refresh-admin" type="button">Refresh Data</button>
+              <button class="ghost" id="logout-admin" type="button">Logout</button>
+            </div>
+          </div>
+          <div class="alert" id="admin-alert"></div>
+          <div class="metrics">
+            <div class="metric m1"><span class="ml">Total unlocks</span><div class="mv" id="stat-unlocks">0</div><div class="mn">Successful unlocks in the last 24 hours</div></div>
+            <div class="metric m2"><span class="ml">Total failures</span><div class="mv" id="stat-failures">0</div><div class="mn">Unlock failures captured by the audit trail</div></div>
+            <div class="metric m3"><span class="ml">Total escalations</span><div class="mv" id="stat-escalations">0</div><div class="mn">Requests flagged for manual review</div></div>
+          </div>
+          <div class="dash">
+            <section class="sub">
+              <h3>Overview</h3>
+              <p class="note">These counters update without reloading the page and stay aligned with the FastAPI backend.</p>
+            </section>
+            <section class="sub">
+              <h3>Top Activity</h3>
+              <ul class="top" id="top-users"><li><span>No activity yet</span><span>0 attempts</span></li></ul>
+            </section>
+          </div>
+        </article>
+
+        <article class="card table-card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Audit Logs</h2>
+              <p class="copy">Latest events from the admin logs API.</p>
+            </div>
+            <span class="tag">Recent Events</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Username</th><th>Event</th><th>Channel</th><th>IP</th><th>Time</th></tr>
+              </thead>
+              <tbody id="logs-body">
+                <tr><td colspan="5" class="muted">Log data will appear here after admin login.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <script>
+    const API_BASE = window.location.origin.includes("localhost:8000") ? window.location.origin : "http://localhost:8000";
+    const state = { unlockUser: "", resetUser: "", resetToken: "", admin: false, userMode: "unlock" };
+    const $ = (id) => document.getElementById(id);
+    const refs = {
+      tabs: document.querySelectorAll(".tab-btn"),
+      panels: document.querySelectorAll(".panel"),
+      unlockView: $("unlock-view"),
+      resetView: $("reset-view"),
+      switchToReset: $("switch-to-reset"),
+      switchToUnlock: $("switch-to-unlock"),
+      unlockAlert: $("unlock-alert"),
+      unlockNote: $("unlock-note"),
+      unlockVerify: $("unlock-verify"),
+      resetAlert: $("reset-alert"),
+      resetNote: $("reset-note"),
+      adminAlert: $("admin-alert"),
+      adminLoginAlert: $("admin-login-alert")
+    };
+
+    refs.tabs.forEach((btn) => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
+    $("unlock-request-form").addEventListener("submit", requestUnlockOtp);
+    $("unlock-verify-form").addEventListener("submit", verifyUnlock);
+    refs.switchToReset.addEventListener("click", () => switchUserMode("reset"));
+    refs.switchToUnlock.addEventListener("click", () => switchUserMode("unlock"));
+    $("reset-request-form").addEventListener("submit", requestResetOtp);
+    $("reset-verify-form").addEventListener("submit", verifyResetOtp);
+    $("reset-update-form").addEventListener("submit", updatePassword);
+    $("admin-login-form").addEventListener("submit", loginAdmin);
+    $("refresh-admin").addEventListener("click", () => loadAdmin(true));
+    $("logout-admin").addEventListener("click", logoutAdmin);
+    setResetStep(1);
+    switchUserMode("unlock");
+
+    function switchTab(id) {
+      refs.tabs.forEach((btn) => btn.classList.toggle("active", btn.dataset.tab === id));
+      refs.panels.forEach((panel) => panel.classList.toggle("active", panel.id === id));
+      if (id === "admin-panel" && state.admin) loadAdmin(false);
+    }
+
+    function switchUserMode(mode) {
+      state.userMode = mode;
+      refs.unlockView.classList.toggle("active", mode === "unlock");
+      refs.resetView.classList.toggle("active", mode === "reset");
+      refs.switchToReset.classList.toggle("hidden", mode === "reset");
+      refs.switchToUnlock.classList.toggle("hidden", mode === "unlock");
+    }
+
+    function setResetStep(step) {
+      $("reset-step-1").classList.add("visible");
+      $("reset-step-2").classList.toggle("visible", step >= 2);
+      $("reset-step-3").classList.toggle("visible", step >= 3);
+    }
+
+    function setFlowComplete(flow, complete) {
+      const node = flow === "unlock" ? refs.unlockView : refs.resetView;
+      node.classList.toggle("complete", complete);
+    }
+
+    function alertBox(node, type, text) {
+      node.className = `alert ${type} show`;
+      node.textContent = text;
+    }
+
+    function clearAlert(node) {
+      node.className = "alert";
+      node.textContent = "";
+    }
+
+    function setLoading(button, loading, text) {
+      if (!button.dataset.text) button.dataset.text = text || button.textContent;
+      button.disabled = loading;
+      button.classList.toggle("load", loading);
+      button.textContent = loading ? "Processing" : button.dataset.text;
+    }
+
+    async function api(path, options = {}) {
+      let res;
+      try {
+        res = await fetch(`${API_BASE}${path}`, {
+          headers: { "Content-Type": "application/json" },
+          ...options
+        });
+      } catch {
+        throw new Error("Unable to reach the FastAPI backend on localhost:8000.");
+      }
+
+      let data = null;
+      try { data = await res.json(); } catch {}
+      if (!res.ok) throw new Error(data && (data.detail || data.message) ? data.detail || data.message : `Request failed with status ${res.status}.`);
+      return data;
+    }
+
+    function esc(value) {
+      return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+    }
+
+    function formatTime(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? (value || "-") : new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(date);
+    }
+
+    async function requestUnlockOtp(event) {
+      event.preventDefault();
+      setFlowComplete("unlock", false);
+      clearAlert(refs.unlockAlert);
+      const button = $("unlock-request-button");
+      const username = $("unlock-username").value.trim();
+      if (!username) return alertBox(refs.unlockAlert, "error", "Please enter a username before requesting an OTP.");
+      setLoading(button, true, "Request OTP");
+      try {
+        const data = await api("/api/auth/request-otp", { method: "POST", body: JSON.stringify({ username }) });
+        state.unlockUser = username;
+        refs.unlockVerify.classList.add("visible");
+        refs.unlockNote.textContent = `OTP sent successfully${data.channel ? ` via ${data.channel}` : ""}${data.masked_contact ? ` to ${data.masked_contact}` : ""}.`;
+        alertBox(refs.unlockAlert, "success", "OTP sent successfully. Enter the code below to continue.");
+      } catch (error) {
+        alertBox(refs.unlockAlert, "error", error.message);
+      } finally {
+        setLoading(button, false, "Request OTP");
+      }
+    }
+
+    async function verifyUnlock(event) {
+      event.preventDefault();
+      clearAlert(refs.unlockAlert);
+      const button = $("unlock-verify-button");
+      const otp = $("unlock-otp").value.trim();
+      const username = state.unlockUser || $("unlock-username").value.trim();
+      if (!username || !otp) return alertBox(refs.unlockAlert, "error", "Enter both username and OTP to continue.");
+      setLoading(button, true, "Verify & Unlock");
+      try {
+        const data = await api("/api/unlock/verify", { method: "POST", body: JSON.stringify({ username, otp }) });
+        if (data.escalated) {
+          alertBox(refs.unlockAlert, "warning", data.message);
+        } else {
+          clearAlert(refs.unlockAlert);
+          setFlowComplete("unlock", true);
+        }
+      } catch (error) {
+        alertBox(refs.unlockAlert, "error", error.message);
+      } finally {
+        setLoading(button, false, "Verify & Unlock");
+      }
+    }
+
+    async function requestResetOtp(event) {
+      event.preventDefault();
+      setFlowComplete("reset", false);
+      clearAlert(refs.resetAlert);
+      const button = $("reset-request-button");
+      const username = $("reset-username").value.trim();
+      if (!username) return alertBox(refs.resetAlert, "error", "Enter a username to request a password reset OTP.");
+      setLoading(button, true, "Request OTP");
+      try {
+        const data = await api("/api/auth/request-password-reset-otp", { method: "POST", body: JSON.stringify({ username }) });
+        state.resetUser = username;
+        state.resetToken = "";
+        setResetStep(2);
+        refs.resetNote.textContent = `OTP sent successfully${data.channel ? ` via ${data.channel}` : ""}${data.masked_contact ? ` to ${data.masked_contact}` : ""}.`;
+        alertBox(refs.resetAlert, "success", "OTP sent successfully. Step 2 is ready.");
+      } catch (error) {
+        alertBox(refs.resetAlert, "error", error.message);
+      } finally {
+        setLoading(button, false, "Request OTP");
+      }
+    }
+
+    async function verifyResetOtp(event) {
+      event.preventDefault();
+      clearAlert(refs.resetAlert);
+      const button = $("reset-verify-button");
+      const otp = $("reset-otp").value.trim();
+      if (!state.resetUser || !otp) return alertBox(refs.resetAlert, "error", "Request an OTP first, then enter the code to verify.");
+      setLoading(button, true, "Verify OTP");
+      try {
+        const data = await api("/api/auth/verify-password-reset-otp", { method: "POST", body: JSON.stringify({ username: state.resetUser, otp }) });
+        state.resetToken = data.reset_token || "";
+        setResetStep(3);
+        refs.resetNote.textContent = "OTP verified. You can now set a new password.";
+        alertBox(refs.resetAlert, "success", "OTP verified successfully. Step 3 is now available.");
+      } catch (error) {
+        alertBox(refs.resetAlert, "error", error.message);
+      } finally {
+        setLoading(button, false, "Verify OTP");
+      }
+    }
+
+    async function updatePassword(event) {
+      event.preventDefault();
+      clearAlert(refs.resetAlert);
+      const button = $("reset-update-button");
+      const newPassword = $("new-password").value;
+      const confirmPassword = $("confirm-password").value;
+      if (!state.resetUser || !state.resetToken) return alertBox(refs.resetAlert, "error", "Your reset session has expired. Verify OTP again to continue.");
+      if (!newPassword || !confirmPassword) return alertBox(refs.resetAlert, "error", "Enter and confirm the new password.");
+      if (newPassword !== confirmPassword) return alertBox(refs.resetAlert, "error", "The passwords do not match.");
+      setLoading(button, true, "Update Password");
+      try {
+        await api("/api/auth/update-password", {
+          method: "POST",
+          body: JSON.stringify({ username: state.resetUser, reset_token: state.resetToken, new_password: newPassword, confirm_password: confirmPassword })
+        });
+        state.resetToken = "";
+        $("reset-request-form").reset();
+        $("reset-verify-form").reset();
+        $("reset-update-form").reset();
+        setResetStep(1);
+        refs.resetNote.textContent = "Step 1 is ready. Request an OTP to continue.";
+        clearAlert(refs.resetAlert);
+        setFlowComplete("reset", true);
+      } catch (error) {
+        alertBox(refs.resetAlert, "error", error.message);
+      } finally {
+        setLoading(button, false, "Update Password");
+      }
+    }
+
+    async function loginAdmin(event) {
+      event.preventDefault();
+      clearAlert(refs.adminLoginAlert);
+      const button = $("admin-login-button");
+      const username = $("admin-username").value.trim();
+      const password = $("admin-password").value;
+      setLoading(button, true, "Login");
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        if (username !== "admin" || password !== "admin123") throw new Error("Invalid admin credentials.");
+        state.admin = true;
+        $("admin-login-card").classList.add("hidden");
+        $("admin-shell").classList.remove("hidden");
+        alertBox(refs.adminAlert, "success", "Admin login successful. Loading dashboard data...");
+        await loadAdmin(false);
+      } catch (error) {
+        alertBox(refs.adminLoginAlert, "error", error.message);
+      } finally {
+        setLoading(button, false, "Login");
+      }
+    }
+
+    async function loadAdmin(manual) {
+      if (!state.admin) return;
+      const button = $("refresh-admin");
+      clearAlert(refs.adminAlert);
+      setLoading(button, true, "Refresh Data");
+      try {
+        const [stats, logs] = await Promise.all([api("/api/admin/stats"), api("/api/admin/logs")]);
+        $("stat-unlocks").textContent = stats.total_unlocks_today ?? 0;
+        $("stat-failures").textContent = stats.total_failures_today ?? 0;
+        $("stat-escalations").textContent = stats.total_escalations_today ?? 0;
+        renderTop(stats.top_users || []);
+        renderLogs(logs || []);
+        if (manual) alertBox(refs.adminAlert, "success", "Admin data refreshed successfully.");
+      } catch (error) {
+        alertBox(refs.adminAlert, "error", error.message);
+      } finally {
+        setLoading(button, false, "Refresh Data");
+      }
+    }
+
+    function renderTop(users) {
+      $("top-users").innerHTML = users.length
+        ? users.map((user) => `<li><span>${esc(user.username)}</span><span>${esc(user.attempts)} attempt${user.attempts === 1 ? "" : "s"}</span></li>`).join("")
+        : "<li><span>No activity yet</span><span>0 attempts</span></li>";
+    }
+
+    function renderLogs(logs) {
+      $("logs-body").innerHTML = logs.length
+        ? logs.map((log) => `<tr><td>${esc(log.username || "-")}</td><td><span class="pill">${esc(log.event || "-")}</span></td><td>${esc(log.channel || "-")}</td><td>${esc(log.ip_address || "-")}</td><td>${esc(formatTime(log.created_at))}</td></tr>`).join("")
+        : '<tr><td colspan="5" class="muted">No audit log entries found.</td></tr>';
+    }
+
+    function logoutAdmin() {
+      state.admin = false;
+      $("admin-shell").classList.add("hidden");
+      $("admin-login-card").classList.remove("hidden");
+      $("admin-login-form").reset();
+      clearAlert(refs.adminAlert);
+      alertBox(refs.adminLoginAlert, "success", "Admin session closed.");
+    }
+  </script>
+</body>
+</html>
