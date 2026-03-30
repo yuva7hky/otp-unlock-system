@@ -42,7 +42,7 @@
 
     <section class="hero">
       <div class="badge">FastAPI OTP Unlock Portal</div>
-      <p>Request an OTP to unlock a locked account, reset a password through a guided flow, and review admin activity from a single responsive page wired to the FastAPI backend on <strong>localhost:8000</strong>.</p>
+      <p>Request an OTP to unlock a locked account, reset a password through a guided flow, and review admin activity from a single responsive page wired to the FastAPI backend.</p>
     </section>
 
     <div class="tabs">
@@ -255,7 +255,7 @@
     </section>
   </main>
   <script>
-    const API_BASE = window.location.origin.includes("localhost:8000") ? window.location.origin : "http://localhost:8000";
+    const BASE_URL = "https://otp-unlock-system-production.up.railway.app";
     const state = { unlockUser: "", resetUser: "", resetToken: "", admin: false, userMode: "unlock" };
     const $ = (id) => document.getElementById(id);
     const refs = {
@@ -333,12 +333,12 @@
     async function api(path, options = {}) {
       let res;
       try {
-        res = await fetch(`${API_BASE}${path}`, {
+        res = await fetch(`${BASE_URL}${path}`, {
           headers: { "Content-Type": "application/json" },
           ...options
         });
       } catch {
-        throw new Error("Unable to reach the FastAPI backend on localhost:8000.");
+        throw new Error("Unable to reach the FastAPI backend.");
       }
 
       let data = null;
