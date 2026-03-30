@@ -331,20 +331,32 @@
     }
 
     async function api(path, options = {}) {
-      let res;
+      let response;
       try {
-        res = await fetch(`${BASE_URL}${path}`, {
-          headers: { "Content-Type": "application/json" },
-          ...options
+        response = await fetch(`${BASE_URL}${path}`, {
+          ...options,
+          headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+          }
         });
       } catch {
-        throw new Error("Unable to reach the FastAPI backend.");
+        throw new Error("Unable to reach backend");
       }
 
-      let data = null;
-      try { data = await res.json(); } catch {}
-      if (!res.ok) throw new Error(data && (data.detail || data.message) ? data.detail || data.message : `Request failed with status ${res.status}.`);
-      return data;
+      try {
+        const data = await response.json();
+        console.log("API Response:", data);
+        if (!response.ok) throw new Error(data?.detail || data?.message || data?.error || `Request failed with status ${response.status}.`);
+        return data;
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          console.log("API Response:", null);
+          if (!response.ok) throw new Error(`Request failed with status ${response.status}.`);
+          return null;
+        }
+        throw error;
+      }
     }
 
     function esc(value) {
