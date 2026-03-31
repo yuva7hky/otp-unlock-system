@@ -15,11 +15,12 @@ OTP_MESSAGE_TEMPLATE = (
 )
 
 # ── Email via Gmail SMTP (FIXED 🔥) ───────────────────────────────────────────
+import asyncio
+
 async def send_email_gmail(email: str, username: str, otp: str) -> bool:
     try:
-        # Check config
         if not settings.EMAIL_USER or not settings.EMAIL_PASS:
-            print("❌ Email config missing in ENV")
+            print("❌ Email config missing")
             return False
 
         subject = "Your Account Unlock OTP"
@@ -29,7 +30,6 @@ Hi {username},
 Your OTP is: {otp}
 
 Valid for {settings.OTP_EXPIRE_MINUTES} minutes.
-Do not share this code.
 """
 
         msg = MIMEText(body)
@@ -37,23 +37,22 @@ Do not share this code.
         msg["From"] = settings.EMAIL_USER
         msg["To"] = email
 
-        # ✅ Gmail SMTP config
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(settings.EMAIL_USER, settings.EMAIL_PASS)
-        server.send_message(msg)
-        server.quit()
+        def send_mail():
+            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
+            server.starttls()
+            server.login(settings.EMAIL_USER, settings.EMAIL_PASS)
+            server.send_message(msg)
+            server.quit()
 
-        print("✅ EMAIL SENT SUCCESSFULLY")
-        logger.info(f"Email OTP sent to {email}")
+        # 🔥 RUN IN THREAD (FIX)
+        await asyncio.to_thread(send_mail)
 
+        print("✅ EMAIL SENT")
         return True
 
     except Exception as e:
         print("❌ EMAIL ERROR:", e)
-        logger.error(f"Gmail send failed: {e}")
         return False
-
 
 # ── Unified Email Handler ─────────────────────────────────────────────────────
 async def send_email(email: str, username: str, otp: str) -> bool:
