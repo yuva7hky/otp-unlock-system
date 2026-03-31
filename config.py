@@ -16,6 +16,12 @@ class Settings(BaseSettings):
     EMAIL_USER: str = ""
     EMAIL_PASS: str = ""
 
+    # ── Email (SendGrid) ────────────────────────────
+    SENDGRID_API_KEY: str = ""
+    EMAIL_FROM: str = ""
+    EMAIL_FROM_NAME: str = ""
+
+
     # ── Database ──────────────────────────────────────
     DATABASE_URL: str = "sqlite+aiosqlite:///./ad_unlock.db"
 
